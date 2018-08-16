@@ -196,6 +196,12 @@ int compile_output(const CoinInfo *coin, const HDNode *root, TxOutputType *in, T
 	size_t addr_raw_len;
 
 	if (in->script_type == OutputScriptType_PAYTOOPRETURN) {
+		if (coin->decred) {
+			memcpy(out->script_pubkey.bytes, in->op_return_data.bytes, in->op_return_data.size);
+			out->script_pubkey.size = in->op_return_data.size;
+			return in->op_return_data.size;
+		}
+
 		// only 0 satoshi allowed for OP_RETURN
 		if (in->amount != 0) {
 			return 0; // failed to compile output
